@@ -39,7 +39,7 @@ class CategoryTest extends TestCase
             'slug' => 'khi',
             'name' => 'Khỉ',
             'description' => 'Khỉ Việt Nam',
-            'image' => UploadedFile::fake()->image('../imgs/khi.jpg'),
+            'image' => UploadedFile::fake()->image('khi.jpg'),
             'status' => 0,
         ];
 

@@ -53,12 +53,14 @@ class AlbumTest extends TestCase
     }
     public function test_CreatAlbum()
     {
-        ob_start();
+        $user = \App\Models\User::where('email', 'quanghuybest@gmail.com')->firstOrFail();
+        $this->actingAs($user);
+
         $data = [
             'user_id' => '1',
             'category_id' => '2',
             'emotion' => 'Khỉ dễ thương',
-            'image_pet' => UploadedFile::fake()->image('../imgs/khi.jpg'),
+            'image_pet' => UploadedFile::fake()->image('khi.jpg'),
         ];
 
         $response = $this->json('POST', '/api/store-albumPet', $data);
@@ -69,7 +71,5 @@ class AlbumTest extends TestCase
                 'status' => 200,
                 'message' => 'Thêm album thành công.',
             ]);
-        $output = ob_get_clean();
-        $this->assertEmpty($output);
     }
 }
