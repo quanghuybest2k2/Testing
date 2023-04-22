@@ -14,28 +14,61 @@ class AuthTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function testRegisterWithValidData()
+    public function testRegister()
     {
-        $email = "doanquanghuy@gmail.com";
-        $name = "Đoàn Quang Huy";
-        User::factory()->create([
-            'email' => $email,
-        ]);
+        $data = [
+            'name' => 'Test User',
+            'email' => 'testuser@example.com',
+            'password' => 'password',
+        ];
 
-        $response = $this->postJson('/api/register', [
-            'name' => $name,
-            'email' => $email,
-            'password' => '12345678',
+        $response = $this->json('POST', '/api/register', $data);
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'status',
+            'username',
+            'token',
+            'message',
         ]);
-
-        $response->assertStatus(422);
-        $response->assertJson([
-            'message' => 'Đã tồn tại user!',
-        ]);
-
         $this->assertDatabaseHas('users', [
-            'name' => $name,
-            'email' => $email,
+            'name' => $data['name'],
+            'email' => $data['email'],
         ]);
+    }
+    public function test_login_and_get_auth_token()
+    {
+        // Tạo tài khoản user mới
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'password' => Hash::make('password'),
+            'role_as' => 0,
+        ]);
+
+        // Gửi yêu cầu đăng nhập với email và password đúng
+        $response = $this->postJson('/api/login', [
+            'email' => 'test@example.com',
+            'password' => 'password',
+        ]);
+
+        // Kiểm tra kết quả trả về của yêu cầu đăng nhập
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'username',
+                'token',
+                'message',
+                'role',
+            ])
+            ->assertJson([
+                'status' => 200,
+                'username' => $user->name,
+                'message' => 'Đăng nhập thành công.',
+            ]);
+
+        // Lấy Auth Token từ kết quả trả về
+        $token = $response->json('token');
+
+        // Kiểm tra Auth Token đã được tạo và trả về
+        $this->assertNotEmpty($token);
     }
 }
