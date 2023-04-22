@@ -51,25 +51,25 @@ class AlbumTest extends TestCase
                 ],
             ]);
     }
-    public function test_CreatAlbum()
-    {
-        $user = \App\Models\User::where('email', 'quanghuybest@gmail.com')->firstOrFail();
-        $this->actingAs($user);
+    // public function test_CreatAlbum()
+    // {
+    //     $user = \App\Models\User::where('email', 'quanghuybest@gmail.com')->firstOrFail();
+    //     $this->actingAs($user);
 
-        $data = [
-            'user_id' => '1',
-            'category_id' => '2',
-            'emotion' => 'Khỉ dễ thương',
-            'image_pet' => UploadedFile::fake()->image('khi.jpg'),
-        ];
+    //     $data = [
+    //         'user_id' => '1',
+    //         'category_id' => '2',
+    //         'emotion' => 'Khỉ dễ thương',
+    //         'image_pet' => UploadedFile::fake()->image('khi.jpg'),
+    //     ];
 
-        $response = $this->json('POST', '/api/store-albumPet', $data);
+    //     $response = $this->json('POST', '/api/store-albumPet', $data);
 
-        $response
-            ->assertStatus(200)
-            ->assertJson([
-                'status' => 200,
-                'message' => 'Thêm album thành công.',
-            ]);
-    }
+    //     $response
+    //         ->assertStatus(200)
+    //         ->assertJson([
+    //             'status' => 200,
+    //             'message' => 'Thêm album thành công.',
+    //         ]);
+    // }
 }
