@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class AlbumTest extends TestCase
@@ -12,6 +14,10 @@ class AlbumTest extends TestCase
     /**
      * A basic feature test example.
      */
+    public $name = 'Đoàn Quang Huy';
+    public $email = 'quanghuybest@gmail.com';
+    public $password = '12345678';
+
     public function test_GetAllPet()
     {
         $response = $this->get('/api/getAlbumPet');
@@ -51,25 +57,70 @@ class AlbumTest extends TestCase
                 ],
             ]);
     }
-    // public function test_CreatAlbum()
-    // {
-    //     $user = \App\Models\User::where('email', 'quanghuybest@gmail.com')->firstOrFail();
-    //     $this->actingAs($user);
+    public function test_login()
+    {
+        // Lấy tài khoản user được tạo sẵn trong hệ thống
+        $user = User::where('email', $this->email)->first();
 
-    //     $data = [
-    //         'user_id' => '1',
-    //         'category_id' => '2',
-    //         'emotion' => 'Khỉ dễ thương',
-    //         'image_pet' => UploadedFile::fake()->image('khi.jpg'),
-    //     ];
+        // Gửi yêu cầu đăng nhập với email và password đúng
+        $response = $this->postJson('/api/login', [
+            'email' => $this->email,
+            'password' => $this->password,
+        ]);
 
-    //     $response = $this->json('POST', '/api/store-albumPet', $data);
+        // Kiểm tra kết quả trả về của yêu cầu đăng nhập
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'status',
+                'username',
+                'token',
+                'message',
+                'role',
+            ])
+            ->assertJson([
+                'status' => 200,
+                'username' => $user->name,
+                'message' => 'Đăng nhập thành công.',
+            ]);
 
-    //     $response
-    //         ->assertStatus(200)
-    //         ->assertJson([
-    //             'status' => 200,
-    //             'message' => 'Thêm album thành công.',
-    //         ]);
-    // }
+        // Lấy Auth Token từ kết quả trả về
+        $token = $response->json('token');
+
+        // Kiểm tra Auth Token đã được tạo và trả về
+        $this->assertNotEmpty($token);
+    }
+    public function test_add_a_pet_to_album()
+    {
+        $user = User::where('email', $this->email)->first();
+        // Set up fake input data
+        $data = [
+            'user_id' => $user->id,
+            'category_id' => 2,
+            'emotion' => 'Con pet này đang test.',
+            //lưu ảnh tạm thời ở storage/framework/testing/disks nên không cần đúng url
+            'image_pet' => UploadedFile::fake()->image('pet.png'),
+        ];
+
+        // Call the store method and assert the response
+        $response = $this->postJson('/api/store-albumPet', $data);
+        if (!$response) {
+            $response->assertStatus(400);
+        }
+        $response->assertStatus(200);
+
+        // Assert that the pet was added to the database
+        $this->assertDatabaseHas('albums', [
+            'user_id' => $user->id,
+            'category_id' => $data['category_id'],
+            'emotion' => $data['emotion'],
+            'image_pet' => 'uploads/album/' . $data['image_pet']->hashName(),
+        ]);
+
+        // kiểm tra xem có lưu vào thư mục /public/uploads/album hay không
+        // nếu tồn tại thì assertExists báo lỗi tồn tại
+        $upload_file = Storage::disk('public')->assertExists('uploads/album/' . $data['image_pet']->hashName());
+        if (!$upload_file) {
+            $this->assertTrue(false, 'Lỗi rồi');
+        }
+    }
 }
