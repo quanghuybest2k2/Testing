@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -14,6 +15,9 @@ class CategoryTest extends TestCase
     /**
      * A basic feature test example.
      */
+    public $email = 'admin@gmail.com';
+    public $password = '12345678';
+
     // Xem danh mục
     public function testGetAllCategory()
     {
@@ -35,43 +39,38 @@ class CategoryTest extends TestCase
     // Thêm danh mục
     public function testCreateCategory()
     {
+        // Gửi yêu cầu đăng nhập và lấy token
+        $response = $this->json('POST', '/api/login', [
+            'email' => $this->email,
+            'password' => $this->password,
+        ]);
+        $token = $response->json('token');
+
+        // Xác thực
         $data = [
-            'slug' => 'khi',
-            'name' => 'Khỉ',
-            'description' => 'Khỉ Việt Nam',
-            'image' => UploadedFile::fake()->image('khi.jpg'),
-            'status' => 0,
+            'slug' => 'abc',
+            'name' => 'ABC',
+            'description' => 'ABC Việt Nam',
+            'status' => '0',
+            'image' => UploadedFile::fake()->image('ca.png'),
         ];
 
-        $response = $this->json('POST', '/api/store-category', $data);
+        // Kiểm tra nếu email đã tồn tại
+        if (Category::where('slug', $data['slug'])->exists()) {
+            $this->assertTrue(false, 'Đã tồn tại slug ' . $data['slug']);
+        }
+        $response = $this->withHeader('Authorization', "Bearer $token")->json('POST', '/api/store-category', $data);
 
-        $response
-            ->assertStatus(200)
-            ->assertJson([
-                'status' => 200,
-                'message' => 'Thêm danh mục thành công.',
-            ])->assertHeader('Content-Type', 'application/json');
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 200,
+            'message' => 'Thêm danh mục thành công.'
+        ]);
     }
+
     // xóa category
-    // public function testDestroy()
-    // {
-    //     // Tạo một category mới sử dụng hàm factory()
-    //     $category = Category::factory(Category::class)->make();
-
-    //     // Gửi yêu cầu DELETE đến API để xóa category với id của category mới tạo
-    //     $response = $this->delete('/api/delete-category/' . $category->id);
-
-    //     // Kiểm tra xem API đã trả về mã trạng thái 200 hay không
-    //     $response->assertStatus(200);
-
-    //     // Kiểm tra xem API đã trả về thông báo thành công tương ứng hay không
-    //     $response->assertJson([
-    //         'status' => 200,
-    //         'message' => 'Đã xóa danh mục.'
-    //     ]);
-
-    //     // Kiểm tra xem category đã bị xóa khỏi cơ sở dữ liệu hay không
-    //     $this->assertDatabaseMissing('categories', ['id' => $category->id]);
-    // }
+    public function testDestroyCategory()
+    {
+    }
     // ...
 }

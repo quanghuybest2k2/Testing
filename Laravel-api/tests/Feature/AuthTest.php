@@ -14,8 +14,8 @@ class AuthTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public $name = 'Đoàn Quang Huy';
-    public $email = 'quanghuybest@gmail.com';
+    public $name = 'Admin';
+    public $email = 'admin@gmail.com';
     public $password = '12345678';
 
     public function testRegister()
