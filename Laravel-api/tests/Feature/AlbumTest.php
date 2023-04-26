@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -57,6 +58,7 @@ class AlbumTest extends TestCase
                 ],
             ]);
     }
+
     public function test_login()
     {
         // Lấy tài khoản user được tạo sẵn trong hệ thống
@@ -89,6 +91,7 @@ class AlbumTest extends TestCase
         // Kiểm tra Auth Token đã được tạo và trả về
         $this->assertNotEmpty($token);
     }
+
     public function test_add_a_pet_to_album()
     {
         $user = User::where('email', $this->email)->first();

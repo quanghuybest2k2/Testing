@@ -44,9 +44,9 @@ class CategoryTest extends TestCase
             'email' => $this->email,
             'password' => $this->password,
         ]);
+
         $token = $response->json('token');
 
-        // Xác thực
         $data = [
             'slug' => 'abc',
             'name' => 'ABC',
@@ -59,6 +59,7 @@ class CategoryTest extends TestCase
         if (Category::where('slug', $data['slug'])->exists()) {
             $this->assertTrue(false, 'Đã tồn tại slug ' . $data['slug']);
         }
+        // Xác thực
         $response = $this->withHeader('Authorization', "Bearer $token")->json('POST', '/api/store-category', $data);
 
         $response->assertStatus(200);
@@ -71,6 +72,32 @@ class CategoryTest extends TestCase
     // xóa category
     public function testDestroyCategory()
     {
+        $id = 4;
+        // Gửi yêu cầu đăng nhập và lấy token
+        $response = $this->json('POST', '/api/login', [
+            'email' => $this->email,
+            'password' => $this->password,
+        ]);
+
+        $token = $response->json('token');
+
+        $category = Category::find($id);
+
+        if (!$category) {
+            $this->assertTrue(false, 'Không tìm thấy id của danh mục!');
+        }
+        // Xác thực
+        $response = $this->withHeader('Authorization', "Bearer $token")->json('DELETE', '/api/delete-category/' . $category->id);
+
+        // Kiểm tra xem response có trả về 200 và message là 'Đã xóa danh mục.'
+        $response->assertStatus(200)
+            ->assertJson([
+                'status' => 200,
+                'message' => 'Đã xóa danh mục.'
+            ]);
+
+        // Kiểm tra xem category đã bị xóa trong database
+        $this->assertDatabaseMissing('categories', ['id' => $category->id]);
     }
     // ...
 }
