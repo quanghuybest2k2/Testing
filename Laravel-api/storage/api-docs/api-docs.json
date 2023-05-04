@@ -1,0 +1,99 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Pet Shop",
+        "description": "Pet Shop API",
+        "contact": {
+            "email": "quanghuybest@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0",
+        "x-logo": {
+            "url": "https://via.placeholder.com/190x90.png?text=L5-Swagger"
+        }
+    },
+    "paths": {
+        "/api/getAlbumPet": {
+            "get": {
+                "tags": [
+                    "Albums"
+                ],
+                "summary": "Lấy danh sách pet của album",
+                "description": "Trả về tất cả album",
+                "operationId": "getAlbumsList",
+                "responses": {
+                    "200": {
+                        "description": "successful operation"
+                    }
+                }
+            }
+        },
+        "/api/store-albumPet": {
+            "post": {
+                "tags": [
+                    "Albums"
+                ],
+                "summary": "create album",
+                "description": "create album",
+                "operationId": "storeAlbum",
+                "requestBody": {
+                    "description": "kiểm tra thông tin",
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "required": [
+                                    "category_id",
+                                    "emotion",
+                                    "image_pet"
+                                ],
+                                "properties": {
+                                    "category_id": {
+                                        "type": "string",
+                                        "enum": [
+                                            "option1",
+                                            "option2",
+                                            "option3"
+                                        ],
+                                        "example": "Chó"
+                                    },
+                                    "emotion": {
+                                        "type": "string",
+                                        "example": "Chó này xinh quá"
+                                    },
+                                    "image_pet": {
+                                        "description": "Hình ảnh",
+                                        "type": "file",
+                                        "example": "pet.png"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Bạn phải điền các trường trên",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bạn phải điền tất cả!"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

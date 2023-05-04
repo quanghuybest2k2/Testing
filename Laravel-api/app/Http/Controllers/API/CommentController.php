@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\Response;
 
 class CommentController extends Controller
 {
@@ -18,6 +19,7 @@ class CommentController extends Controller
             'comments' => $comments
         ]);
     }
+    // người dùng tạo
     public function store(Request $request, $slug)
     {
         $validator = Validator::make(
@@ -62,19 +64,36 @@ class CommentController extends Controller
             ]);
         }
     }
-    public function deleteComment($id)
+    // người dùng xóa comment của chính họ
+    public function destroy($id)
     {
-
         $comment = Comment::find($id);
         if ($comment) {
             $comment->delete();
             return response()->json([
-                'status' => 200,
+                'status' => Response::HTTP_ACCEPTED,
                 'message' => 'Đã xóa bình luận.'
             ]);
         } else {
             return response()->json([
-                'status' => 404,
+                'status' => Response::HTTP_NO_CONTENT,
+                'message' => 'Không tìm thấy id của bình luận!'
+            ]);
+        }
+    }
+    // admin xóa
+    public function delete($id)
+    {
+        $comment = Comment::find($id);
+        if ($comment) {
+            $comment->delete();
+            return response()->json([
+                'status' => Response::HTTP_ACCEPTED,
+                'message' => 'Đã xóa bình luận.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => Response::HTTP_NO_CONTENT,
                 'message' => 'Không tìm thấy id của bình luận!'
             ]);
         }

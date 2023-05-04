@@ -47,13 +47,20 @@ class FrontendController extends Controller
         $category = Category::where('slug', $slug)->where('status', '0')->first();
         if ($category) {
             // Tìm pet thông qua khóa ngoại liên kết khóa chính
-            $product = Product::where('category_id', $category->id)->where('status', '0')->get();
+            $product = Product::where('category_id', $category->id)->where('status', '0')->paginate(3);
+            // $product = Product::where('category_id', $category->id)->where('status', '0')->get();
             if ($product) {
                 return response()->json([
                     'status' => 200,
                     'product_data' => [
                         'product' => $product,
                         'category' => $category,
+                    ],
+                    'pagination' => [
+                        'current_page' => $product->currentPage(),
+                        'last_page' => $product->lastPage(),
+                        'per_page' => $product->perPage(),
+                        'total' => $product->total(),
                     ],
                 ]);
             } else {
@@ -105,18 +112,4 @@ class FrontendController extends Controller
             ]);
         }
     }
-    // public function sendEmail(Request $request)
-    // {
-    //     $all_subscribers = Subscriber::all();
-    //     // $all_subscribers = Subscriber::all()->filter(function ($subscriber) {
-    //     //     return Str::contains($subscriber->email, 'gmail.com'); // chứa đuổi gmail.com
-    //     // });
-    //     $data = [
-    //         'product_name' => $request->input('name'),
-    //     ];
-    //     foreach ($all_subscribers as $subscriber) {
-    //         Mail::to($subscriber->email)
-    //             ->send(new NewProductNotification($data));
-    //     }
-    // }
 }

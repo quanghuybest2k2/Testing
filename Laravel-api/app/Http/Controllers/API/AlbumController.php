@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\Validator;
 
 class AlbumController extends Controller
 {
+    /**
+     * @OA\Get(
+     *      path="/api/getAlbumPet",
+     *      operationId="getAlbumsList",
+     *      tags={"Albums"},
+     *      summary="Lấy danh sách pet của album",
+     *      description="Trả về tất cả album",
+     *      @OA\Response(
+     *          response=200,
+     *          description="successful operation",
+     *          ),
+     *      ),
+     *      security={{"sanctum": {}}}
+     * )
+     */
     public function index()
     {
         $pets = Album::all();
@@ -25,6 +40,45 @@ class AlbumController extends Controller
             'pets' => $pets,
         ]);
     }
+    /**
+     * @OA\Post(
+     * path="/api/store-albumPet",
+     * summary="create album",
+     * description="create album",
+     * operationId="storeAlbum",
+     * tags={"Albums"},
+     * @OA\RequestBody(
+     *    required=true,
+     *    description="kiểm tra thông tin",
+     *    @OA\MediaType(
+     *        mediaType="multipart/form-data",
+     *        @OA\Schema(
+     *           @OA\Property(
+     *           property="category_id",
+     *           type="string",
+     *           enum={"option1", "option2", "option3"},
+     *           example="Chó"
+     *           ),
+     *            @OA\Property(property="emotion", type="string", example="Chó này xinh quá"),
+     *            @OA\Property(
+     *                property="image_pet",
+     *                type="file",
+     *                description="Hình ảnh",
+     *                example="pet.png"
+     *            ),
+     *            required={"category_id","emotion", "image_pet"}
+     *        )
+     *    )
+     * ),
+     * @OA\Response(
+     *    response=422,
+     *    description="Bạn phải điền các trường trên",
+     *    @OA\JsonContent(
+     *       @OA\Property(property="message", type="string", example="Bạn phải điền tất cả!")
+     *        )
+     *     )
+     * )
+     */
     public function store(Request $request)
     {
         if (auth('sanctum')->check()) {
@@ -36,7 +90,7 @@ class AlbumController extends Controller
                     'image_pet' => 'required|image|mimes:jpeg,png,jpg|max:15360',
                 ],
                 [
-                    'required'  => 'Bạn phải điền :attribute'
+                    'required' => 'Bạn phải điền :attribute'
                 ]
             );
             if ($validator->fails()) {
