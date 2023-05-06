@@ -13,7 +13,7 @@ class SubscriberTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public $email = 'abc@example.com';
+    public $email = 'abc@gmail.com';
 
     public function testStoreSubscriber()
     {
