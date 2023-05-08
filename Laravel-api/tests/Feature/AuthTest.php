@@ -88,7 +88,6 @@ class AuthTest extends TestCase
         $this->assertNotEmpty($token);
     }
 
-
     public function test_logout()
     {
         $user = User::where('email', '=', $this->email)->first();

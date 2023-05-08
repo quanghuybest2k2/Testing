@@ -2,22 +2,17 @@
 
 namespace Tests\Feature;
 
-use App\Models\Album;
+use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\Album;
+use App\Models\Category;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AlbumTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public $name = 'Đoàn Quang Huy';
-    public $email = 'quanghuybest@gmail.com';
-    public $password = '12345678';
-
     public function test_GetAllPet()
     {
         $response = $this->get('/api/getAlbumPet');
@@ -58,61 +53,17 @@ class AlbumTest extends TestCase
             ]);
     }
 
-    public function test_login()
+    public function testStoreWithoutAuthentication()
     {
-        // Lấy tài khoản user được tạo sẵn trong hệ thống
-        $user = User::where('email', $this->email)->first();
-
-        // Gửi yêu cầu đăng nhập với email và password đúng
-        $response = $this->postJson('/api/login', [
-            'email' => $this->email,
-            'password' => $this->password,
-        ]);
-
-        // Kiểm tra kết quả trả về của yêu cầu đăng nhập
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'status',
-                'username',
-                'token',
-                'message',
-                'role',
-            ])
-            ->assertJson([
-                'status' => 200,
-                'username' => $user->name,
-                'message' => 'Đăng nhập thành công.',
-            ]);
-
-        // Lấy Auth Token từ kết quả trả về
-        $token = $response->json('token');
-
-        // Kiểm tra Auth Token đã được tạo và trả về
-        $this->assertNotEmpty($token);
-    }
-    public function test_add_a_pet_to_album()
-    {
-        // Gửi yêu cầu đăng nhập và lấy token
-        $response = $this->json('POST', '/api/login', [
-            'email' => $this->email,
-            'password' => $this->password,
-        ]);
-
-        $token = $response->json('token');
-
-        $data = [
-            'user_id' => 1,
+        $response = $this->postJson('/api/store-albumPet', [
             'category_id' => 1,
-            'emotion' => 'Con chim này mỏ nhọn',
-            'image_pet' => UploadedFile::fake()->image('chim.png'),
-        ];
-        // Xác thực
-        $response = $this->withHeader('Authorization', "Bearer $token")->json('POST', '/api/store-albumPet', $data);
-
-        $response->assertStatus(200);
-        $response->assertJson([
-            'status' => 200,
-            'message' => 'Thêm thú cưng thành công.',
+            'emotion' => 'happy',
+            'image_pet' => UploadedFile::fake()->image('pet.jpg'),
+        ], [
+            'Authorization' => 'Bearer invalid_token'
         ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['message' => 'Bạn phải đăng nhập!']);
     }
 }
