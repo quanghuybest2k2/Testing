@@ -72,7 +72,7 @@ class CategoryTest extends TestCase
     // xóa category
     public function testDestroyCategory()
     {
-        $id = 4;
+        $id = 3;
         // Gửi yêu cầu đăng nhập và lấy token
         $response = $this->json('POST', '/api/login', [
             'email' => $this->email,

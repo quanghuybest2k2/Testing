@@ -90,41 +90,6 @@ class AlbumTest extends TestCase
         // Kiểm tra Auth Token đã được tạo và trả về
         $this->assertNotEmpty($token);
     }
-
-    // public function test_add_a_pet_to_album()
-    // {
-    //     $user = User::where('email', $this->email)->first();
-    //     // Set up fake input data
-    //     $data = [
-    //         'user_id' => $user->id,
-    //         'category_id' => 2,
-    //         'emotion' => 'Con pet này đang test.',
-    //         //lưu ảnh tạm thời ở storage/framework/testing/disks nên không cần đúng url
-    //         'image_pet' => UploadedFile::fake()->image('pet.png'),
-    //     ];
-
-    //     // Call the store method and assert the response
-    //     $response = $this->postJson('/api/store-albumPet', $data);
-    //     if (!$response) {
-    //         $response->assertStatus(400);
-    //     }
-    //     $response->assertStatus(200);
-
-    //     // Assert that the pet was added to the database
-    //     $this->assertDatabaseHas('albums', [
-    //         'user_id' => $user->id,
-    //         'category_id' => $data['category_id'],
-    //         'emotion' => $data['emotion'],
-    //         'image_pet' => 'uploads/album/' . $data['image_pet']->hashName(),
-    //     ]);
-
-    //     // kiểm tra xem có lưu vào thư mục /public/uploads/album hay không
-    //     // nếu tồn tại thì assertExists báo lỗi tồn tại
-    //     $upload_file = Storage::disk('public')->assertExists('uploads/album/' . $data['image_pet']->hashName());
-    //     if (!$upload_file) {
-    //         $this->assertTrue(false, 'Lỗi rồi');
-    //     }
-    // }
     public function test_add_a_pet_to_album()
     {
         // Gửi yêu cầu đăng nhập và lấy token

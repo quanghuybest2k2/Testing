@@ -6,7 +6,9 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AuthTest extends TestCase
 {
@@ -14,44 +16,49 @@ class AuthTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public $name = 'Admin';
-    public $email = 'admin@gmail.com';
+    public $name = 'Nguyễn Văn Dũng';
+    public $email = 'dungnguyen@gmail.com';
     public $password = '12345678';
 
     public function testRegister()
     {
-        $data = [
-            'name' => $this->name,
-            'email' => $this->email,
-            'password' => $this->password,
+        $userData = [
+            'name' => $this->faker->name,
+            'email' => $this->faker->safeEmail,
+            'password' => $this->faker->password(8),
         ];
-        // Kiểm tra nếu email đã tồn tại
-        if (User::where('email', $this->email)->exists()) {
-            $this->assertTrue(false, 'Đã tồn tại user');
-        }
 
-        $response = $this->json('POST', '/api/register', $data);
-        if (!$response) {
-            $response->assertStatus(400);
-        }
+        $response = $this->postJson('/api/register', $userData);
+
         $response->assertStatus(200);
-
-        $response->assertJsonStructure([
-            'status',
-            'username',
-            'token',
-            'message',
+        $response->assertJson([
+            'status' => 200,
+            'username' => $userData['name'],
+            'message' => 'Đăng ký thành công.',
         ]);
+
         $this->assertDatabaseHas('users', [
-            'name' => $data['name'],
-            'email' => $data['email'],
+            'name' => $userData['name'],
+            'email' => $userData['email'],
         ]);
-    }
 
+        $user = User::where('email', $userData['email'])->first();
+        $this->assertTrue(Hash::check($userData['password'], $user->password));
+    }
+    public function test_register_with_missing_fields()
+    {
+        $response = $this->postJson('/api/register');
+
+        $response->assertStatus(400);
+        $response->assertJsonValidationErrors(['name', 'email', 'password']);
+    }
     public function test_login()
     {
-        // Lấy tài khoản user được tạo sẵn trong hệ thống
-        $user = User::where('email', $this->email)->first();
+        // Tạo tài khoản user mới
+        $user = User::factory()->create([
+            'email' => $this->email,
+            'password' => Hash::make($this->password),
+        ]);
 
         // Gửi yêu cầu đăng nhập với email và password đúng
         $response = $this->postJson('/api/login', [
@@ -80,6 +87,7 @@ class AuthTest extends TestCase
         // Kiểm tra Auth Token đã được tạo và trả về
         $this->assertNotEmpty($token);
     }
+
 
     public function test_logout()
     {
