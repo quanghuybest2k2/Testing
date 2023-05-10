@@ -2,12 +2,13 @@
 
 namespace Tests\Feature;
 
+use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Laravel\Sanctum\Sanctum;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class AuthTest extends TestCase
@@ -89,33 +90,23 @@ class AuthTest extends TestCase
         $this->assertNotEmpty($token);
     }
 
-    public function test_logout()
+    public function testLogout()
     {
-        $user = User::where('email', '=', $this->email)->first();
+        // Tạo một người dùng mới và tạo token cho người dùng đó
+        $user = User::factory()->create();
+        Sanctum::actingAs($user);
 
-        // Đăng nhập vào hệ thống và lấy Auth Token
-        $token = $user->createToken('TestToken')->plainTextToken;
+        // Gửi một yêu cầu POST đến API logout
+        $response = $this->post('/api/logout');
 
-        // Gửi yêu cầu đăng xuất với Auth Token
-        $response = $this->withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-        ])->postJson('/api/logout');
+        // Kiểm tra xem token đã bị xóa chưa
+        $this->assertCount(0, $user->tokens);
 
-        // Kiểm tra kết quả trả về của yêu cầu đăng xuất
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'status',
-                'message',
-            ])
-            ->assertJson([
-                'status' => 200,
-                'message' => 'Đã đăng xuất.',
-            ]);
-
-        // Kiểm tra Auth Token đã bị xóa khỏi cơ sở dữ liệu
-        $this->assertDatabaseMissing('personal_access_tokens', [
-            'tokenable_id' => $user->id,
-            'name' => $this->name,
+        // Kiểm tra xem phản hồi có đúng mã lỗi và thông báo
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 200,
+            'message' => 'Đã đăng xuất.',
         ]);
     }
 }

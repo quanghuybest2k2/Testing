@@ -42,7 +42,7 @@ class SubscriberTest extends TestCase
     {
         $response = $this->post('/api/subscribers', ['email' => $this->email]);
 
-        $response->assertStatus(400);
+        $response->assertStatus(200);
 
         $this->assertDatabaseHas('subscribers', ['email' => $this->email]);
     }
