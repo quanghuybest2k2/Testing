@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class AuthTest extends TestCase
 {
     use WithFaker;
+    use RefreshDatabase;
     /**
      * A basic feature test example.
      */

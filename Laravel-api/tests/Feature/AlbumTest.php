@@ -63,7 +63,7 @@ class AlbumTest extends TestCase
             'Authorization' => 'Bearer invalid_token'
         ]);
 
-        $response->assertStatus(200)
+        $response->assertStatus(401)
             ->assertJson(['message' => 'Bạn phải đăng nhập!']);
     }
 }
