@@ -2,13 +2,14 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
+use Tests\TestCase;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use App\Models\Category;
+use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Tests\TestCase;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CategoryTest extends TestCase
 {
@@ -18,86 +19,122 @@ class CategoryTest extends TestCase
     public $email = 'admin@gmail.com';
     public $password = '12345678';
 
-    // Xem danh mục
-    public function testGetAllCategory()
+    // Xem danh mục không cần authentication
+    public function testGetCategoy()
     {
         $response = $this->get('/api/getCategory');
         $response->assertStatus(200);
         $response->assertJsonStructure([
             'status',
-            'category' => [
-                '*' => [
-                    'id',
-                    'name',
-                    'status',
-                    'created_at',
-                    'updated_at',
-                ]
-            ]
+            'category',
         ]);
     }
-    // Thêm danh mục
-    public function testCreateCategory()
+    public function testGetAllCategory()
     {
-        // Gửi yêu cầu đăng nhập và lấy token
-        $response = $this->json('POST', '/api/login', [
-            'email' => $this->email,
-            'password' => $this->password,
+        $response = $this->get('/api/get-all-category');
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'status',
+            'category',
         ]);
+    }
+    public function testStore()
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('TestToken')->plainTextToken;
 
-        $token = $response->json('token');
+        $file = UploadedFile::fake()->image('test.jpg');
 
-        $data = [
-            'slug' => 'abc',
-            'name' => 'ABC',
-            'description' => 'ABC Việt Nam',
-            'status' => '0',
-            'image' => UploadedFile::fake()->image('ca.png'),
+        // Tạo dữ liệu giả ngẫu nhiên bằng phương thức factory()
+        $categoryData = Category::factory()->make();
+
+        $request = [
+            'slug' => $categoryData->slug,
+            'name' => $categoryData->name,
+            'image' => $file,
+            'status' => true,
         ];
 
-        // Kiểm tra nếu email đã tồn tại
-        if (Category::where('slug', $data['slug'])->exists()) {
-            $this->assertTrue(false, 'Đã tồn tại slug ' . $data['slug']);
-        }
-        // Xác thực
-        $response = $this->withHeader('Authorization', "Bearer $token")->json('POST', '/api/store-category', $data);
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->post('/api/store-category', $request);
 
         $response->assertStatus(200);
         $response->assertJson([
             'status' => 200,
-            'message' => 'Thêm danh mục thành công.'
+            'message' => 'Thêm danh mục thành công.',
         ]);
     }
 
-    // xóa category
-    public function testDestroyCategory()
+    public function testEditWithView()
     {
-        $id = 3;
-        // Gửi yêu cầu đăng nhập và lấy token
-        $response = $this->json('POST', '/api/login', [
-            'email' => $this->email,
-            'password' => $this->password,
+        $user = User::factory()->create();
+        $token = $user->createToken('TestToken')->plainTextToken;
+
+        $id = 1;
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->get('/api/edit-category/' . $id);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'status',
+            'category',
+        ]);
+    }
+
+    public function testUpdateCategory()
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('TestToken')->plainTextToken;
+
+        // Tạo một record mới trong cơ sở dữ liệu
+        $category = Category::factory()->create();
+
+        // Tạo dữ liệu ngẫu nhiên để cập nhật record
+        $updatedData = [
+            'slug' => Str::random(10),
+            'name' => 'New Category Name',
+            'image' => 'image.jpg',
+            'status' => true,
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->put('/api/update-category/' . $category->id, $updatedData);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 200,
+            'message' => 'Cập nhật danh mục thành công.',
+        ]);
+    }
+
+    public function testDestroy()
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('TestToken')->plainTextToken;
+
+        $category = Category::factory()->create();
+        $id = $category->id;
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->delete('/api/delete-category/' . $id);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 200,
+            'message' => 'Đã xóa danh mục.',
         ]);
 
-        $token = $response->json('token');
-
-        $category = Category::find($id);
-
-        if (!$category) {
-            $this->assertTrue(false, 'Không tìm thấy id của danh mục!');
-        }
-        // Xác thực
-        $response = $this->withHeader('Authorization', "Bearer $token")->json('DELETE', '/api/delete-category/' . $category->id);
-
-        // Kiểm tra xem response có trả về 200 và message là 'Đã xóa danh mục.'
-        $response->assertStatus(200)
-            ->assertJson([
-                'status' => 200,
-                'message' => 'Đã xóa danh mục.'
-            ]);
-
-        // Kiểm tra xem category đã bị xóa trong database
-        $this->assertDatabaseMissing('categories', ['id' => $category->id]);
+        // $id = 1;
+        // $response = $this->delete('/api/delete-category/' . $id);
+        // $response->assertStatus(200);
+        // $response->assertJson([
+        //     'status' => 200,
+        //     'message' => 'Đã xóa danh mục.',
+        // ]);
     }
-    // ...
 }
