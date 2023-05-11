@@ -128,13 +128,5 @@ class CategoryTest extends TestCase
             'status' => 200,
             'message' => 'Đã xóa danh mục.',
         ]);
-
-        // $id = 1;
-        // $response = $this->delete('/api/delete-category/' . $id);
-        // $response->assertStatus(200);
-        // $response->assertJson([
-        //     'status' => 200,
-        //     'message' => 'Đã xóa danh mục.',
-        // ]);
     }
 }

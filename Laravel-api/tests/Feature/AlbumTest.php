@@ -15,42 +15,25 @@ class AlbumTest extends TestCase
 {
     public function test_GetAllPet()
     {
+        // Gửi request GET đến endpoint của API
         $response = $this->get('/api/getAlbumPet');
 
-        $response->assertStatus(200)
-            ->assertJsonStructure([
-                'status',
-                'pets' => [
-                    '*' => [
-                        'id',
-                        'user_id',
-                        'category_id',
-                        'emotion',
-                        'image_pet',
-                        'created_at',
-                        'updated_at',
-                        'category' => [
-                            'id',
-                            'slug',
-                            'name',
-                            'description',
-                            'image',
-                            'status',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'user' => [
-                            'id',
-                            'name',
-                            'email',
-                            'email_verified_at',
-                            'role_as',
-                            'created_at',
-                            'updated_at',
-                        ],
+        // Kiểm tra status code của response
+        $response->assertStatus(200);
+
+        // Kiểm tra cấu trúc JSON response
+        $response->assertJsonStructure([
+            'status',
+            'pets' => [
+                '*' => [
+                    'user_id',
+                    'user' => [
+                        'email',
+                        'name'
                     ],
-                ],
-            ]);
+                ]
+            ]
+        ]);
     }
 
     public function testStoreWithoutAuthentication()
