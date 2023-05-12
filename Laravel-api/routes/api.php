@@ -23,7 +23,6 @@ Route::controller(FrontendController::class)->group(function () {
     Route::get('getCategory', 'category');
     Route::get('fetchproducts/{slug}', 'product');
     Route::get('viewproductdetail/{category_slug}/{product_slug}', 'viewproduct');
-    // Route::post('send-email', 'sendEmail');
 });
 // get all category from client
 Route::controller(CategoryController::class)->group(function () {
