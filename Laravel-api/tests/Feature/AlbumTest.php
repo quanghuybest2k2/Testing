@@ -47,6 +47,34 @@ class AlbumTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-            ->assertJson(['message' => 'Bạn phải đăng nhập!']);
+            ->assertJson([
+                'status' => 401,
+                'message' => 'Bạn phải đăng nhập!',
+            ]);
+    }
+    public function testStoreSuccess()
+    {
+        $user = User::factory()->create();
+        $token = $user->createToken('TestToken')->plainTextToken;
+
+        // Tạo dữ liệu giả ngẫu nhiên bằng phương thức factory()
+        $categoryData = Album::factory()->make();
+
+        $request = [
+            'user_id' => $categoryData->user_id,
+            'category_id' => $categoryData->category_id,
+            'emotion' => $categoryData->emotion,
+            'image_pet' => UploadedFile::fake()->image('pet.jpg'),
+        ];
+
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+        ])->post('/api/store-albumPet', $request);
+
+        $response->assertStatus(200);
+        $response->assertJson([
+            'status' => 200,
+            'message' => 'Thêm thú cưng thành công.',
+        ]);
     }
 }

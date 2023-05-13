@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th4 16, 2023 lúc 10:03 AM
+-- Thời gian đã tạo: Th5 04, 2023 lúc 03:56 PM
 -- Phiên bản máy phục vụ: 10.4.27-MariaDB
 -- Phiên bản PHP: 8.2.0
 
@@ -42,9 +42,9 @@ CREATE TABLE `albums` (
 --
 
 INSERT INTO `albums` (`id`, `user_id`, `category_id`, `emotion`, `image_pet`, `created_at`, `updated_at`) VALUES
-(1, 2, 2, 'Cục cưng nay biết tia gái rồi ta', 'uploads/album/1681632109.jpg', '2023-04-16 01:01:49', '2023-04-16 01:01:49'),
-(2, 2, 1, 'Miu xinh như chủ mày á', 'uploads/album/1681632129.jpg', '2023-04-16 01:02:09', '2023-04-16 01:02:09'),
-(3, 2, 3, 'Lý Mạc Sầu nhìn chán thiệt', 'uploads/album/1681632160.jpg', '2023-04-16 01:02:41', '2023-04-16 01:02:41');
+(1, 2, 2, 'Cục cưng nay biết tia gái rồi ta', 'uploads/album/1683207315.jpg', '2023-05-04 13:35:15', '2023-05-04 13:35:15'),
+(2, 2, 1, 'Mèo này mặt láo ghê', 'uploads/album/1683207450.jpg', '2023-05-04 13:37:30', '2023-05-04 13:37:30'),
+(3, 3, 2, 'Chó chị mày xinh nhất', 'uploads/album/1683207506.jpg', '2023-05-04 13:38:26', '2023-05-04 13:38:26');
 
 -- --------------------------------------------------------
 
@@ -60,13 +60,6 @@ CREATE TABLE `carts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Đang đổ dữ liệu cho bảng `carts`
---
-
-INSERT INTO `carts` (`id`, `user_id`, `product_id`, `product_qty`, `created_at`, `updated_at`) VALUES
-(6, '3', 3, 2, '2023-04-16 00:55:19', '2023-04-16 00:55:19');
 
 -- --------------------------------------------------------
 
@@ -90,9 +83,8 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`id`, `slug`, `name`, `description`, `image`, `status`, `created_at`, `updated_at`) VALUES
-(1, 'meo', 'Mèo', 'Mèo Việt Nam', 'uploads/category/1681630213.jpg', 0, '2023-04-16 00:30:13', '2023-04-16 00:30:13'),
-(2, 'cho', 'Chó', 'Chó Việt Nam', 'uploads/category/1681630324.jpg', 0, '2023-04-16 00:32:04', '2023-04-16 00:32:04'),
-(3, 'chim', 'Chim', 'Chim Việt Nam', 'uploads/category/1681630354.jpg', 0, '2023-04-16 00:32:34', '2023-04-16 00:32:34');
+(1, 'meo', 'Mèo', 'Mèo Việt Nam', 'uploads/category/1683206734.jpg', 0, '2023-05-04 13:25:34', '2023-05-04 13:25:34'),
+(2, 'cho', 'Chó', 'Chó Việt Nam', 'uploads/category/1683206764.jpg', 0, '2023-05-04 13:26:04', '2023-05-04 13:26:04');
 
 -- --------------------------------------------------------
 
@@ -114,9 +106,11 @@ CREATE TABLE `comments` (
 --
 
 INSERT INTO `comments` (`id`, `product_id`, `user_id`, `comment`, `created_at`, `updated_at`) VALUES
-(1, 2, 2, 'Chó này nhìn mặt láo', '2023-04-16 00:40:15', '2023-04-16 00:40:15'),
-(2, 3, 3, 'Chim này xinh', '2023-04-16 00:55:14', '2023-04-16 00:55:14'),
-(3, 2, 3, 'ah thì ra đây là Cậu Vàng', '2023-04-16 00:59:02', '2023-04-16 00:59:02');
+(1, 1, 2, 'Mẻo này xinh', '2023-05-04 13:46:33', '2023-05-04 13:46:33'),
+(2, 6, 2, 'Chó này đen như cú chứ sô cô la gì', '2023-05-04 13:47:07', '2023-05-04 13:47:07'),
+(3, 3, 2, 'Bốc em nó về thôi', '2023-05-04 13:47:43', '2023-05-04 13:47:43'),
+(4, 3, 3, 'ơ kìa con gì giống con mèo quá z nè', '2023-05-04 13:48:44', '2023-05-04 13:48:44'),
+(5, 4, 2, 'con chó gì nhìn giống con sư tử', '2023-05-04 13:55:58', '2023-05-04 13:55:58');
 
 -- --------------------------------------------------------
 
@@ -192,8 +186,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `amount`, `address`, `nameCard`, `cardNumber`, `cvc`, `month`, `year`, `payment_mode`, `tracking_no`, `created_at`, `updated_at`) VALUES
-(1, 2, '26400000', 'Ninh Sơn, Ninh Thuận, Việt Nam', 'Test', '4242 4242 4242 4242', '123', '12', '2028', 'Stripe', 'petshop3817', '2023-04-16 00:41:52', '2023-04-16 00:41:52'),
-(2, 2, '14400000', 'Lý Tự Trọng, TP. Phan Rang, Ninh Thuận', 'Test', '4242 4242 4242 4242', '123', '12', '2028', 'Stripe', 'petshop2146', '2023-04-16 00:53:44', '2023-04-16 00:53:44');
+(1, 2, '4130000', '123 Tôn Đức Thắng, Ninh Sơn, Ninh Thuận, Việt Nam', 'Test', '4242 4242 4242 4242', '123', '12', '2028', 'Stripe', 'petshop1433', '2023-05-04 13:55:24', '2023-05-04 13:55:24');
 
 -- --------------------------------------------------------
 
@@ -216,10 +209,8 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `qty`, `price`, `created_at`, `updated_at`) VALUES
-(1, 1, 2, 2, 1200000, '2023-04-16 00:41:52', '2023-04-16 00:41:52'),
-(2, 1, 1, 2, 12000000, '2023-04-16 00:41:52', '2023-04-16 00:41:52'),
-(3, 2, 2, 2, 1200000, '2023-04-16 00:53:44', '2023-04-16 00:53:44'),
-(4, 2, 1, 1, 12000000, '2023-04-16 00:53:44', '2023-04-16 00:53:44');
+(1, 1, 6, 1, 1530000, '2023-05-04 13:55:24', '2023-05-04 13:55:24'),
+(2, 1, 3, 2, 1300000, '2023-05-04 13:55:24', '2023-05-04 13:55:24');
 
 -- --------------------------------------------------------
 
@@ -293,9 +284,12 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `category_id`, `slug`, `name`, `description`, `brand`, `selling_price`, `original_price`, `qty`, `image`, `featured`, `status`, `count`, `created_at`, `updated_at`) VALUES
-(1, 1, 'miu', 'Miu', 'Miu là mèo', 'Đà Lạt', '12000000', '13000000', '12', 'uploads/product/1681630415.jpg', 1, 0, 3, '2023-04-16 00:33:35', '2023-04-16 00:58:32'),
-(2, 2, 'cho-shiba', 'Chó shiba', 'Chó Nhật Bản', 'Ninh Thuận', '1200000', '1400000', '11', 'uploads/product/1681630473.jpg', 0, 0, 9, '2023-04-16 00:34:33', '2023-04-16 01:00:55'),
-(3, 3, 'ly-mac-sau', 'Lý Mạc Sầu', 'Chim Trung Quốc', 'Trung Quốc', '1262652621', '1462652621', '14', 'uploads/product/1681630545.jpg', 1, 0, 5, '2023-04-16 00:35:45', '2023-04-16 00:57:53');
+(1, 1, 'miu-miu', 'Miu Miu', 'Miu Miu là mèo đó', 'Ninh Thuận', '1200000', '1300000', '20', 'uploads/product/1683206936.jpg', 1, 0, 6, '2023-05-04 13:28:56', '2023-05-04 13:46:35'),
+(2, 2, 'cho-shiba', 'Chó Shiba', 'GIống chó Nhật Bản', 'Đà Lạt', '1200000', '1400000', '15', 'uploads/product/1683206996.jpg', 1, 0, 0, '2023-05-04 13:29:56', '2023-05-04 13:30:17'),
+(3, 1, 'meo-trang', 'Mèo Trắng', 'Mèo màu trắng', 'Ấn Độ', '1300000', '1400000', '8', 'uploads/product/1683207088.jpg', 0, 0, 14, '2023-05-04 13:31:28', '2023-05-04 13:55:24'),
+(4, 2, 'chow-chow', 'Chow Chow', 'Chó Canada', 'Canada', '13300000', '13400000', '10', 'uploads/product/1683207152.jpg', 0, 0, 4, '2023-05-04 13:32:32', '2023-05-04 13:56:00'),
+(5, 2, 'cau-vang', 'Cậu Vàng', 'Bạn Lão Hạc', 'Hà Nội', '13300000', '14300000', '12', 'uploads/product/1683207204.jpg', 1, 0, 0, '2023-05-04 13:33:24', '2023-05-04 13:33:33'),
+(6, 2, 'so-co-la', 'Sô cô la', 'Chó này màu nâu', 'Ninh Thuận', '1530000', '1630000', '1', 'uploads/product/1683207822.jpg', 1, 0, 4, '2023-05-04 13:43:42', '2023-05-04 13:55:24');
 
 -- --------------------------------------------------------
 
@@ -309,6 +303,14 @@ CREATE TABLE `subscribers` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `subscribers`
+--
+
+INSERT INTO `subscribers` (`id`, `email`, `created_at`, `updated_at`) VALUES
+(1, 'quanghuybest@gmail.com', '2023-05-04 13:44:40', '2023-05-04 13:44:40'),
+(2, 'yenlam@gmail.com', '2023-05-04 13:44:49', '2023-05-04 13:44:49');
 
 -- --------------------------------------------------------
 
@@ -333,9 +335,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `role_as`, `created_at`, `updated_at`) VALUES
-(1, 'Admin', 'admin@gmail.com', NULL, '$2y$10$khpyiH2tteXU3mxjAtVWjuFjeFirUm53w3oTnNOm.YplrOVA03q0i', NULL, 1, '2023-04-16 00:28:46', '2023-04-16 00:28:46'),
-(2, 'Đoàn Quang Huy', 'quanghuybest@gmail.com', NULL, '$2y$10$Qjy3IqTKE3q0MyGv2OaRj.jljzialYLvsY1rVDBP1QBHTogGLJoz6', NULL, 0, '2023-04-16 00:29:17', '2023-04-16 00:29:17'),
-(3, 'Lâm Ngọc Yến', 'yenlam@gmail.com', NULL, '$2y$10$0okiWTrriQkhNQWgLB5aNO.ZWFnPhv3CYUjfxviyK2jR8cCJHnfG.', NULL, 0, '2023-04-16 00:54:58', '2023-04-16 00:54:58');
+(1, 'Admin', 'admin@gmail.com', NULL, '$2y$10$zVEKvmkmVhaWRjzuyl/AWObGhf2GLvj.I6fB21i/XU4Rbuujicl0C', NULL, 1, '2023-05-04 13:23:49', '2023-05-04 13:23:49'),
+(2, 'Đoàn Quang Huy', 'quanghuybest@gmail.com', NULL, '$2y$10$QW7Dh1QTXb/1HKgeNQKI3u43BGAJS71YSHIAr4RGI2mnRPxRA3G8q', NULL, 0, '2023-05-04 13:24:23', '2023-05-04 13:24:23'),
+(3, 'Lâm Ngọc Yến', 'yenlam@gmail.com', NULL, '$2y$10$u7smO2PVPWT06MEZqg9G9OieMyMpKWjeedos5NNEPb05nA7pnp8F.', NULL, 0, '2023-05-04 13:24:52', '2023-05-04 13:24:52');
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -452,19 +454,19 @@ ALTER TABLE `albums`
 -- AUTO_INCREMENT cho bảng `carts`
 --
 ALTER TABLE `carts`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT cho bảng `failed_jobs`
@@ -482,31 +484,31 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT cho bảng `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `personal_access_tokens`
 --
 ALTER TABLE `personal_access_tokens`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT cho bảng `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT cho bảng `subscribers`
 --
 ALTER TABLE `subscribers`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT cho bảng `users`
